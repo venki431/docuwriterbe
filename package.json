@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "build": "tsc",
+    "build": "tsc && npx puppeteer browsers install chrome",
     "start": "node dist/index.js",
     "db:migrate": "ts-node-dev --transpile-only scripts/migrate.ts",
     "clean": "rm -rf dist"
