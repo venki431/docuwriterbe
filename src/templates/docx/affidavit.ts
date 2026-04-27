@@ -32,8 +32,8 @@ export async function generateAffidavitDocx(data: AffidavitData): Promise<Buffer
         body([
           `I, `,
           bold(data.deponentName),
-          `, son / daughter / wife of `,
-          bold(data.fatherName),
+          `, `,
+          bold(`${data.deponentRelationType} ${data.deponentRelationName}`),
           `, aged about ${data.age} years, by occupation ${data.occupation}, residing at ${data.address}, do hereby solemnly affirm and sincerely declare as follows:`,
         ]),
 

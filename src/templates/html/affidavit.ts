@@ -10,7 +10,7 @@ export function generateAffidavitHTML(data: AffidavitData): string {
     <h2 class="doc-subtitle">Sworn Statement of the Deponent</h2>
 
     <p>I, <span class="label">${e(data.deponentName)}</span>,
-      son / daughter / wife of <span class="label">${e(data.fatherName)}</span>,
+      <span class="label">${e(data.deponentRelationType)} ${e(data.deponentRelationName)}</span>,
       aged about <span class="label">${e(data.age)}</span> years,
       occupation <span class="label">${e(data.occupation)}</span>, residing at
       ${nl2br(data.address)}, do hereby solemnly affirm and declare as follows:</p>

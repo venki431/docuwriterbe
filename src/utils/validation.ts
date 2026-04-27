@@ -35,7 +35,10 @@ export const rentalSchema = z.object({
 
 export const affidavitSchema = z.object({
   deponentName: z.string().min(1, 'Deponent name is required'),
-  fatherName: z.string().min(1, 'Father / husband name is required'),
+  deponentRelationType: z.enum(['S/o', 'D/o', 'W/o'], {
+    errorMap: () => ({ message: 'Select S/o, D/o or W/o' }),
+  }),
+  deponentRelationName: z.string().min(1, 'Parent / spouse name is required'),
   age: z.string().min(1, 'Age is required'),
   occupation: z.string().min(1, 'Occupation is required'),
   address: z.string().min(1, 'Address is required'),
@@ -45,7 +48,7 @@ export const affidavitSchema = z.object({
   executionDate: z.string().min(1, 'Execution date is required'),
 });
 
-export const documentTypeSchema = z.enum(['sale-deed', 'rental', 'affidavit']);
+export const documentTypeSchema = z.enum(['agreement-of-sale', 'rental', 'affidavit']);
 export const documentFormatSchema = z.enum(['pdf', 'docx']);
 
 export const generateRequestSchema = z.object({
@@ -60,11 +63,11 @@ export const previewRequestSchema = z.object({
 });
 
 export function validateDocumentData(
-  type: 'sale-deed' | 'rental' | 'affidavit',
+  type: 'agreement-of-sale' | 'rental' | 'affidavit',
   data: Record<string, unknown>,
 ) {
   switch (type) {
-    case 'sale-deed':
+    case 'agreement-of-sale':
       return saleDeedSchema.parse(data);
     case 'rental':
       return rentalSchema.parse(data);

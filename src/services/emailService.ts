@@ -376,7 +376,7 @@ export interface PaymentReceiptEmailParams {
   planLabel: string;
   /** Human-readable duration e.g. "30 days". Empty string for verification. */
   durationLabel: string;
-  /** Formatted amount string e.g. "₹799.00" — formatted by the caller. */
+  /** Formatted amount string e.g. "₹499.00" — formatted by the caller. */
   amountFormatted: string;
   invoiceNumber: string;
   /** ISO string or pre-formatted — we format it as IST here. */

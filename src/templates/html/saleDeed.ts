@@ -6,10 +6,10 @@ export function generateSaleDeedHTML(data: SaleDeedData): string {
   const e = escapeHtml;
 
   const body = `
-    <h1 class="doc-title">Sale Deed</h1>
+    <h1 class="doc-title">Agreement of Sale</h1>
     <h2 class="doc-subtitle">State of Telangana</h2>
 
-    <p>This <span class="label">SALE DEED</span> is made and executed on this
+    <p>This <span class="label">AGREEMENT OF SALE</span> is made and executed on this
       <span class="label">${e(data.executionDate)}</span> at
       <span class="label">${e(data.executionPlace)}</span>.</p>
 
@@ -85,7 +85,7 @@ export function generateSaleDeedHTML(data: SaleDeedData): string {
       </table>
     </div>
 
-    <p>IN WITNESS WHEREOF, the parties have signed this Sale Deed on the
+    <p>IN WITNESS WHEREOF, the parties have signed this Agreement of Sale on the
       day and year first above written.</p>
 
     <div class="signature-block">
@@ -100,5 +100,5 @@ export function generateSaleDeedHTML(data: SaleDeedData): string {
     </div>
   `;
 
-  return wrapHtml({ title: 'Sale Deed', body });
+  return wrapHtml({ title: 'Agreement of Sale', body });
 }

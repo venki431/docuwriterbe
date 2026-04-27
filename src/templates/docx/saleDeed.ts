@@ -77,20 +77,20 @@ function boundariesTable(data: SaleDeedData): Table {
 export async function generateSaleDeedDocx(data: SaleDeedData): Promise<Buffer> {
   const doc = new Document({
     creator: 'DocuWriter',
-    title: 'Sale Deed',
-    description: 'Sale Deed generated via DocuWriter',
+    title: 'Agreement of Sale',
+    description: 'Agreement of Sale generated via DocuWriter',
     styles: DOC_STYLES,
     numbering: DOC_NUMBERING,
     sections: [
       buildSection([
-        title('Sale Deed'),
+        title('Agreement of Sale'),
         subtitle('State of Telangana'),
 
         stampNote('[ Affix Non-Judicial Stamp / e-Stamp of requisite value here ]'),
 
         body([
           `This `,
-          bold('SALE DEED'),
+          bold('AGREEMENT OF SALE'),
           ` is made and executed on this `,
           bold(data.executionDate),
           ` at `,

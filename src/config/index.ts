@@ -28,7 +28,7 @@ const subscriptionPlans: SubscriptionPlan[] = [
     pricePaise:
       Number(process.env.SUBSCRIPTION_PRICE_MONTHLY_PAISE) ||
       legacyMonthlyPrice ||
-      79900, // ₹799
+      49900, // ₹499
     durationDays: 30,
   },
   {

@@ -9,7 +9,7 @@ export function generatePreviewHtml(
 ): string {
   const d = data as any;
   switch (type) {
-    case 'sale-deed':
+    case 'agreement-of-sale':
       return generateSaleDeedHTML(d);
     case 'rental':
       return generateRentalHTML(d);
