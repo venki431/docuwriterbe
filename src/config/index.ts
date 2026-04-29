@@ -92,7 +92,7 @@ export const config = {
   email: {
     resendApiKey: process.env.RESEND_API_KEY || '',
     // Must be a verified sender on Resend, otherwise sends will fail.
-    from: process.env.EMAIL_FROM || 'DocuWriter <noreply@docuwriter.app>',
+    from: process.env.EMAIL_FROM || 'DocGen <noreply@docgen.in>',
   },
   passwordReset: {
     // Short-lived by design. 30 min is the sweet spot for email-based flows.
@@ -102,16 +102,16 @@ export const config = {
   // Fill these via env once the legal entity + GST registration are in place.
   // Today: unregistered startup → Bill of Supply; no GST breakdown.
   seller: {
-    legalName: process.env.SELLER_LEGAL_NAME || 'DocuWriter',
+    legalName: process.env.SELLER_LEGAL_NAME || 'DocGen',
     addressLine1: process.env.SELLER_ADDRESS_LINE1 || 'Hyderabad',
     addressLine2: process.env.SELLER_ADDRESS_LINE2 || 'Telangana, India',
     city: process.env.SELLER_CITY || 'Hyderabad',
     state: process.env.SELLER_STATE || 'Telangana',
     country: process.env.SELLER_COUNTRY || 'India',
     pincode: process.env.SELLER_PINCODE || '',
-    email: process.env.SELLER_EMAIL || 'billing@docuwriter.app',
+    email: process.env.SELLER_EMAIL || 'billing@docgen.in',
     phone: process.env.SELLER_PHONE || '',
-    website: process.env.SELLER_WEBSITE || 'docuwriter.app',
+    website: process.env.SELLER_WEBSITE || 'docgen.in',
     pan: process.env.SELLER_PAN || '', // e.g. AAAPL1234C
     gstin: process.env.SELLER_GSTIN || '', // empty → unregistered (Bill of Supply)
     invoicePrefix: process.env.INVOICE_PREFIX || 'DW',

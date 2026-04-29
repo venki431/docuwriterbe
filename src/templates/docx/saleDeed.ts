@@ -76,9 +76,9 @@ function boundariesTable(data: SaleDeedData): Table {
 
 export async function generateSaleDeedDocx(data: SaleDeedData): Promise<Buffer> {
   const doc = new Document({
-    creator: 'DocuWriter',
+    creator: 'DocGen',
     title: 'Agreement of Sale',
-    description: 'Agreement of Sale generated via DocuWriter',
+    description: 'Agreement of Sale generated via DocGen',
     styles: DOC_STYLES,
     numbering: DOC_NUMBERING,
     sections: [

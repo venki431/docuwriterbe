@@ -154,7 +154,7 @@ export function renderPasswordResetEmail(
   const firstName = (name.split(' ')[0] || 'there').trim();
   const supportEmail = config.seller.email;
   const productOrigin = config.clientOrigin.replace(/\/+$/, '');
-  const subject = 'Reset your DocuWriter password';
+  const subject = 'Reset your DocGen password';
   const deviceLabel = describeUserAgent(requesterUserAgent);
   const ipLabel = requesterIp || 'Unknown';
   const timeLabel = formatIstDateTime(requestedAt);
@@ -163,7 +163,7 @@ export function renderPasswordResetEmail(
   const text = [
     `Hi ${firstName},`,
     '',
-    `Someone (hopefully you) asked to reset the password on your DocuWriter account.`,
+    `Someone (hopefully you) asked to reset the password on your DocGen account.`,
     `If it was you, open the link below within ${ttlMinutes} minutes to set a new password:`,
     '',
     resetUrl,
@@ -177,7 +177,7 @@ export function renderPasswordResetEmail(
     `You can ignore this email — your password hasn't changed. If you see`,
     `repeated requests you didn't make, please email ${supportEmail}.`,
     '',
-    `— The DocuWriter team`,
+    `— The DocGen team`,
     `${productOrigin}`,
   ].join('\n');
 
@@ -219,7 +219,7 @@ export function renderPasswordResetEmail(
 <body class="shell" style="margin:0;padding:0;background:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,sans-serif;">
   <!-- Hidden preheader (shown in inbox preview) -->
   <div style="display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;">
-    Set a new password for your DocuWriter account — this link expires in ${ttlMinutes} minutes.
+    Set a new password for your DocGen account — this link expires in ${ttlMinutes} minutes.
   </div>
 
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f1f5f9;">
@@ -235,7 +235,7 @@ export function renderPasswordResetEmail(
                     <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#3a6bf0 0%,#1c357f 100%);color:#ffffff;font-weight:700;font-size:18px;text-align:center;line-height:40px;">D</div>
                   </td>
                   <td style="padding-left:12px;vertical-align:middle;" class="text-strong">
-                    <span style="font-size:18px;font-weight:700;color:#0f172a;letter-spacing:-0.01em;">DocuWriter</span>
+                    <span style="font-size:18px;font-weight:700;color:#0f172a;letter-spacing:-0.01em;">DocGen</span>
                   </td>
                 </tr>
               </table>
@@ -260,7 +260,7 @@ export function renderPasswordResetEmail(
               </p>
               <p class="text-muted" style="margin:0 0 24px;font-size:15px;line-height:1.55;color:#475569;">
                 Someone (hopefully you) asked to reset the password on your
-                DocuWriter account. If it was you, tap the button below to
+                DocGen account. If it was you, tap the button below to
                 set a new one.
               </p>
 
@@ -341,7 +341,7 @@ export function renderPasswordResetEmail(
           <tr>
             <td style="padding:20px 4px 0;">
               <p class="text-muted" style="margin:0 0 6px;font-size:12px;color:#94a3b8;line-height:1.5;text-align:center;">
-                DocuWriter · Hyderabad, Telangana, India
+                DocGen · Hyderabad, Telangana, India
               </p>
               <p class="text-muted" style="margin:0;font-size:12px;color:#94a3b8;line-height:1.5;text-align:center;">
                 <a href="${safeOrigin}/terms" class="footer-link" style="color:#64748b;text-decoration:none;">Terms</a>
@@ -409,7 +409,7 @@ export function renderPaymentReceiptEmail(
 
   const isVerification = kind === 'verification';
   const subject = isVerification
-    ? `Your DocuWriter verification receipt (${invoiceNumber})`
+    ? `Your DocGen verification receipt (${invoiceNumber})`
     : `Payment received — ${planLabel} (${invoiceNumber})`;
 
   const headline = isVerification
@@ -417,7 +417,7 @@ export function renderPaymentReceiptEmail(
     : 'Payment received — thank you';
 
   const lede = isVerification
-    ? `Your ₹1 verification charge cleared and your DocuWriter account is now verified. You can download any generated document right away.`
+    ? `Your ₹1 verification charge cleared and your DocGen account is now verified. You can download any generated document right away.`
     : `Your ${planLabel} is active. The invoice for this payment is attached to this email as a PDF — you can also re-download it from your account any time.`;
 
   // ─── plain text ─────────────────────────────────────────────────────────
@@ -425,7 +425,7 @@ export function renderPaymentReceiptEmail(
     `Hi ${firstName},`,
     '',
     isVerification
-      ? `Your DocuWriter account has been verified. The invoice for your ₹1 charge is attached to this email.`
+      ? `Your DocGen account has been verified. The invoice for your ₹1 charge is attached to this email.`
       : `Thanks for subscribing to ${planLabel}. Your invoice is attached to this email as a PDF.`,
     '',
     `— Payment details —`,
@@ -442,7 +442,7 @@ export function renderPaymentReceiptEmail(
     `Questions about this charge? Email ${supportEmail} and include the`,
     `invoice number above — we'll sort it out quickly.`,
     '',
-    `— The DocuWriter team`,
+    `— The DocGen team`,
     `${productOrigin}`,
   ]
     .filter((l) => l !== '' || true) // keep blanks for readability
@@ -529,7 +529,7 @@ export function renderPaymentReceiptEmail(
                     <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#3a6bf0 0%,#1c357f 100%);color:#ffffff;font-weight:700;font-size:18px;text-align:center;line-height:40px;">D</div>
                   </td>
                   <td style="padding-left:12px;vertical-align:middle;">
-                    <span style="font-size:18px;font-weight:700;color:#0f172a;letter-spacing:-0.01em;">DocuWriter</span>
+                    <span style="font-size:18px;font-weight:700;color:#0f172a;letter-spacing:-0.01em;">DocGen</span>
                   </td>
                 </tr>
               </table>
@@ -635,7 +635,7 @@ export function renderPaymentReceiptEmail(
           <tr>
             <td style="padding:20px 4px 0;">
               <p class="text-muted" style="margin:0 0 6px;font-size:12px;color:#94a3b8;line-height:1.5;text-align:center;">
-                DocuWriter · Hyderabad, Telangana, India
+                DocGen · Hyderabad, Telangana, India
               </p>
               <p class="text-muted" style="margin:0;font-size:12px;color:#94a3b8;line-height:1.5;text-align:center;">
                 <a href="${safeOrigin}/terms" class="footer-link" style="color:#64748b;text-decoration:none;">Terms</a>

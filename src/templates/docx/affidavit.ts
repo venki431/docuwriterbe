@@ -17,9 +17,9 @@ import {
 
 export async function generateAffidavitDocx(data: AffidavitData): Promise<Buffer> {
   const doc = new Document({
-    creator: 'DocuWriter',
+    creator: 'DocGen',
     title: 'Affidavit',
-    description: 'Affidavit generated via DocuWriter',
+    description: 'Affidavit generated via DocGen',
     styles: DOC_STYLES,
     numbering: DOC_NUMBERING,
     sections: [
