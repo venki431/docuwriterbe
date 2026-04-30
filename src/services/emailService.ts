@@ -366,6 +366,230 @@ export function renderPasswordResetEmail(
   return { subject, html, text };
 }
 
+// ─── welcome email ─────────────────────────────────────────────────────────
+
+export interface WelcomeEmailParams {
+  name: string;
+  /** Number of free-trial days the account starts with. */
+  trialDays: number;
+  /** When the trial expires — formatted as IST in the body. */
+  trialEndsAt: Date;
+}
+
+export function renderWelcomeEmail(
+  params: WelcomeEmailParams,
+): { subject: string; html: string; text: string } {
+  const { name, trialDays, trialEndsAt } = params;
+
+  const firstName = (name.split(' ')[0] || 'there').trim();
+  const supportEmail = config.seller.email;
+  const productOrigin = config.clientOrigin.replace(/\/+$/, '');
+  const documentsUrl = `${productOrigin}/documents`;
+  const accountUrl = `${productOrigin}/account`;
+  const trialEndsLabel = formatIstDateTime(trialEndsAt);
+
+  const subject = 'Welcome to DocGen — your free trial starts now';
+
+  // ─── plain text ─────────────────────────────────────────────────────────
+  const text = [
+    `Hi ${firstName},`,
+    '',
+    `Welcome to DocGen — we're glad to have you on board.`,
+    '',
+    `Your account is ready and your ${trialDays}-day free trial is active`,
+    `until ${trialEndsLabel}. During the trial you can preview every`,
+    `template; download (PDF / DOCX) unlocks once you verify your account.`,
+    '',
+    `What you can do today:`,
+    `  • Generate a Rental Agreement`,
+    `  • Draft a Sale Deed`,
+    `  • Prepare an Affidavit`,
+    '',
+    `Start here:`,
+    documentsUrl,
+    '',
+    `Manage your trial, billing and verification on your account page:`,
+    accountUrl,
+    '',
+    `Questions? Just reply to this email or write to ${supportEmail}.`,
+    '',
+    `— The DocGen team`,
+    `${productOrigin}`,
+  ].join('\n');
+
+  // ─── HTML ───────────────────────────────────────────────────────────────
+  const e = escapeHtml;
+  const safeName = e(firstName);
+  const safeDocumentsUrl = e(documentsUrl);
+  const safeAccountUrl = e(accountUrl);
+  const safeSupport = e(supportEmail);
+  const safeOrigin = e(productOrigin);
+  const safeTrialEnds = e(trialEndsLabel);
+
+  const html = `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="supported-color-schemes" content="light dark" />
+  <title>${e(subject)}</title>
+  <style>
+    @media (prefers-color-scheme: dark) {
+      .card { background:#0f172a !important; color:#e2e8f0 !important; border-color:#1e293b !important; }
+      .card-soft { background:#1e293b !important; border-color:#334155 !important; }
+      .text-muted { color:#94a3b8 !important; }
+      .text-strong { color:#f8fafc !important; }
+      .shell { background:#020617 !important; }
+      .footer-link { color:#93c5fd !important; }
+    }
+    @media only screen and (max-width: 600px) {
+      .container { width:100% !important; padding:16px !important; }
+      .card { padding:24px !important; }
+      .feature-row td { display:block !important; width:100% !important; padding:8px 0 !important; }
+    }
+  </style>
+</head>
+<body class="shell" style="margin:0;padding:0;background:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,sans-serif;">
+  <div style="display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;">
+    Your DocGen account is ready — ${trialDays}-day free trial active until ${safeTrialEnds}.
+  </div>
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f1f5f9;">
+    <tr>
+      <td align="center" style="padding:32px 16px;">
+        <table role="presentation" class="container" width="560" cellpadding="0" cellspacing="0" border="0" style="width:560px;max-width:560px;">
+          <!-- Brand header -->
+          <tr>
+            <td style="padding:0 4px 20px 4px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="width:40px;vertical-align:middle;">
+                    <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#3a6bf0 0%,#1c357f 100%);color:#ffffff;font-weight:700;font-size:18px;text-align:center;line-height:40px;">D</div>
+                  </td>
+                  <td style="padding-left:12px;vertical-align:middle;">
+                    <span style="font-size:18px;font-weight:700;color:#0f172a;letter-spacing:-0.01em;">DocGen</span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="card" style="background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:36px;box-shadow:0 1px 2px rgba(15,23,42,0.04);">
+
+              <div style="width:52px;height:52px;border-radius:14px;background:#eef5ff;display:inline-block;text-align:center;line-height:52px;margin-bottom:20px;">
+                <span style="font-size:26px;">👋</span>
+              </div>
+
+              <h1 class="text-strong" style="margin:0 0 10px;font-size:24px;line-height:1.25;color:#0f172a;font-weight:700;letter-spacing:-0.02em;">
+                Welcome to DocGen, ${safeName}
+              </h1>
+
+              <p class="text-muted" style="margin:0 0 8px;font-size:15px;line-height:1.55;color:#475569;">
+                Your account is ready. We're glad to have you on board — DocGen
+                helps you draft Indian legal documents from vetted templates in
+                minutes, no lawyer round-trips required.
+              </p>
+              <p class="text-muted" style="margin:0 0 24px;font-size:15px;line-height:1.55;color:#475569;">
+                Your <strong style="color:#0f172a;">${trialDays}-day free trial</strong>
+                is active until <strong style="color:#0f172a;">${safeTrialEnds}</strong>.
+                Preview every template during the trial; download (PDF / DOCX)
+                unlocks after a one-time ₹1 verification.
+              </p>
+
+              <!-- CTA button (bulletproof for Outlook) -->
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px;">
+                <tr>
+                  <td align="center" style="border-radius:10px;background:#294fd4;">
+                    <!--[if mso]>
+                    <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${safeDocumentsUrl}" style="height:48px;v-text-anchor:middle;width:240px;" arcsize="21%" stroke="f" fillcolor="#294fd4">
+                      <w:anchorlock/>
+                      <center style="color:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:15px;font-weight:600;">Create your first document</center>
+                    </v:roundrect>
+                    <![endif]-->
+                    <!--[if !mso]><!-- -->
+                    <a href="${safeDocumentsUrl}"
+                       style="display:inline-block;padding:14px 28px;font-size:15px;font-weight:600;color:#ffffff;background:#294fd4;border-radius:10px;text-decoration:none;letter-spacing:0.01em;">
+                      Create your first document
+                    </a>
+                    <!--<![endif]-->
+                  </td>
+                </tr>
+              </table>
+
+              <!-- What you can do -->
+              <div class="card-soft" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:18px;margin:0 0 24px;">
+                <div class="text-strong" style="font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;">
+                  What you can draft today
+                </div>
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" class="feature-row">
+                  <tr>
+                    <td style="padding:6px 0;font-size:14px;color:#0f172a;">📄&nbsp;&nbsp;Rental Agreement</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:6px 0;font-size:14px;color:#0f172a;">🏠&nbsp;&nbsp;Sale Deed</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:6px 0;font-size:14px;color:#0f172a;">📝&nbsp;&nbsp;Affidavit</td>
+                  </tr>
+                </table>
+              </div>
+
+              <!-- Account link -->
+              <p class="text-muted" style="margin:0 0 22px;font-size:13px;color:#64748b;line-height:1.55;">
+                Trial status, plan upgrades and verification all live on your
+                <a href="${safeAccountUrl}" style="color:#294fd4;text-decoration:none;font-weight:500;">account page</a>.
+              </p>
+
+              <!-- Help callout -->
+              <div style="border-left:3px solid #3a6bf0;padding:4px 0 4px 14px;margin:0 0 20px;">
+                <p class="text-strong" style="margin:0 0 4px;font-size:14px;font-weight:600;color:#0f172a;">
+                  Need a hand?
+                </p>
+                <p class="text-muted" style="margin:0;font-size:13px;color:#475569;line-height:1.55;">
+                  Reply to this email or write to
+                  <a href="mailto:${safeSupport}" style="color:#294fd4;text-decoration:none;font-weight:500;">${safeSupport}</a>
+                  — a real person reads every message.
+                </p>
+              </div>
+
+              <p class="text-muted" style="margin:0;font-size:12px;color:#94a3b8;line-height:1.55;">
+                DocGen generates documents from templates you fill in yourself —
+                we are not a substitute for legal advice. For high-value matters,
+                please have an advocate review the final draft.
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:20px 4px 0;">
+              <p class="text-muted" style="margin:0 0 6px;font-size:12px;color:#94a3b8;line-height:1.5;text-align:center;">
+                DocGen · Hyderabad, Telangana, India
+              </p>
+              <p class="text-muted" style="margin:0;font-size:12px;color:#94a3b8;line-height:1.5;text-align:center;">
+                <a href="${safeOrigin}/terms" class="footer-link" style="color:#64748b;text-decoration:none;">Terms</a>
+                &nbsp;·&nbsp;
+                <a href="${safeOrigin}/privacy" class="footer-link" style="color:#64748b;text-decoration:none;">Privacy</a>
+                &nbsp;·&nbsp;
+                <a href="${safeOrigin}/disclaimer" class="footer-link" style="color:#64748b;text-decoration:none;">Legal disclaimer</a>
+              </p>
+              <p class="text-muted" style="margin:10px 0 0;font-size:11px;color:#cbd5e1;line-height:1.5;text-align:center;">
+                You're getting this because you just created a DocGen account.
+                This is a one-time onboarding email.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+
+  return { subject, html, text };
+}
+
 // ─── payment receipt ───────────────────────────────────────────────────────
 
 export type PaymentReceiptKind = 'subscription' | 'verification';
