@@ -2,9 +2,14 @@ import { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 import * as authService from '../services/authService';
 import * as passwordResetService from '../services/passwordResetService';
-import { UnauthorizedError } from '../utils/errors';
+import { NotFoundError, UnauthorizedError } from '../utils/errors';
 import { computeSubscriptionStatus } from '../utils/subscription';
 import { findUserById } from '../services/userService';
+import { config } from '../config';
+import {
+  signInWithGoogle,
+  verifyGoogleIdToken,
+} from '../services/googleAuthService';
 
 const signupSchema = z.object({
   name: z.string().trim().min(2).max(120),
@@ -32,6 +37,10 @@ const signupSchema = z.object({
     }),
   }),
   termsVersion: z.string().trim().min(1).max(40).optional(),
+  // Referral code from `/signup?ref=...`. Optional, normalised server-side.
+  // Length range matches the 8-char generated codes plus a little slack for
+  // any future reformatting; runtime lookup tolerates whitespace/case.
+  referralCode: z.string().trim().min(4).max(32).optional(),
 });
 
 function normalisePhone(raw: string): string {
@@ -82,6 +91,7 @@ export async function signup(
       password: input.password,
       mobileNumber: normalisePhone(input.mobileNumber),
       termsVersion: input.termsVersion ?? '1.0.0',
+      referralCode: input.referralCode?.toUpperCase() ?? null,
       signupIp: clientIp(req),
       signupUserAgent: req.get('user-agent') ?? null,
       signupLocale: req.get('accept-language')?.split(',')[0]?.trim() ?? null,
@@ -183,6 +193,54 @@ export async function resetPassword(
       newPassword: input.password,
     });
     res.json({ success: true });
+  } catch (err) {
+    next(err);
+  }
+}
+
+// ─── public auth-config (drives the frontend "Continue with Google" button) ──
+
+export function getAuthConfig(_req: Request, res: Response): void {
+  // Public on purpose — frontend reads this before login. We expose ONLY
+  // the public client_id (audience) and the boolean flag. No secrets here.
+  res.json({
+    googleAuthEnabled: config.googleAuth.enabled,
+    googleClientId: config.googleAuth.enabled
+      ? config.googleAuth.clientId
+      : '',
+  });
+}
+
+// ─── Google sign-in ─────────────────────────────────────────────────────────
+
+const googleSignInSchema = z.object({
+  idToken: z.string().min(20).max(8192),
+  referralCode: z.string().trim().min(4).max(32).optional(),
+});
+
+export async function googleSignIn(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    if (!config.googleAuth.enabled) {
+      // 404 (not 400) so disabled feature looks indistinguishable from a
+      // route that doesn't exist.
+      throw new NotFoundError();
+    }
+    const input = googleSignInSchema.parse(req.body);
+    const profile = await verifyGoogleIdToken(input.idToken);
+    const result = await signInWithGoogle({
+      profile,
+      referralCode: input.referralCode?.toUpperCase() ?? null,
+      signupIp: clientIp(req),
+      signupUserAgent: req.get('user-agent') ?? null,
+      signupLocale: req.get('accept-language')?.split(',')[0]?.trim() ?? null,
+    });
+    res
+      .status(result.isNewUser ? 201 : 200)
+      .json(await withSubscription(result.user.id, result));
   } catch (err) {
     next(err);
   }

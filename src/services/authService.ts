@@ -18,6 +18,10 @@ import {
   verifyRefreshToken,
 } from './tokenService';
 import { renderWelcomeEmail, sendEmail } from './emailService';
+import {
+  attachReferralOnSignup,
+  generateUniqueReferralCode,
+} from './referralService';
 import { AuthUser } from '../types/auth';
 
 export interface AuthResult {
@@ -40,6 +44,7 @@ export async function signup(params: {
   password: string;
   mobileNumber: string;
   termsVersion: string;
+  referralCode?: string | null;
   signupIp?: string | null;
   signupUserAgent?: string | null;
   signupLocale?: string | null;
@@ -54,6 +59,7 @@ export async function signup(params: {
   if (existing) throw new ConflictError('An account with this email already exists');
 
   const passwordHash = await bcrypt.hash(params.password, config.bcrypt.saltRounds);
+  const referralCode = await generateUniqueReferralCode();
   try {
     const row = await insertUser({
       name: params.name.trim(),
@@ -62,10 +68,23 @@ export async function signup(params: {
       mobileNumber: params.mobileNumber,
       trialDays: config.trial.days,
       termsVersion: params.termsVersion,
+      referralCode,
       signupIp: params.signupIp ?? null,
       signupUserAgent: params.signupUserAgent ?? null,
       signupLocale: params.signupLocale ?? null,
     });
+
+    // Best-effort referral attach. A bad / unknown / self-referral code must
+    // never block account creation — the new user is already in the DB.
+    try {
+      await attachReferralOnSignup({
+        newUserId: row.id,
+        newUserSignupIp: row.signup_ip,
+        referralCode: params.referralCode ?? null,
+      });
+    } catch (err) {
+      console.error('[referral] attach on signup failed:', err);
+    }
 
     const tokens = await issueTokenPair(row.id, row.email);
 

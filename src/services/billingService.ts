@@ -8,6 +8,7 @@ import {
 } from '../utils/errors';
 import { getRazorpay } from './razorpayClient';
 import { assignInvoiceNumber, deliverInvoiceEmail } from './invoiceService';
+import { awardReferralIfPending } from './referralService';
 
 /**
  * Fire-and-forget wrapper around deliverInvoiceEmail — used by all billing
@@ -253,6 +254,12 @@ export async function verifyAndActivate(params: {
          returning verified_at, subscription_active_until`,
         [params.userId],
       );
+
+      // Inside the same transaction so the referral reward and the verify
+      // commit succeed (or roll back) atomically. Idempotent — safe if the
+      // webhook arrives after /verify has already settled it.
+      await awardReferralIfPending(client, params.userId);
+
       return updated[0];
     });
 
@@ -402,6 +409,8 @@ export async function handleWebhookEvent(params: {
           `update users set verified_at = coalesce(verified_at, now()) where id = $1`,
           [userId],
         );
+        // Same transaction → reward + verification commit together.
+        await awardReferralIfPending(client, userId);
       } else {
         const durationDays =
           row.duration_days ??
