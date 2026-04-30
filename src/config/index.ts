@@ -99,6 +99,15 @@ export const config = {
     // Must be a verified sender on Resend, otherwise sends will fail.
     from: process.env.EMAIL_FROM || 'DocGen <noreply@docgen.in>',
   },
+  googleAuth: {
+    // Master kill-switch. When false, /auth/google + /auth/config gate the
+    // feature off so the frontend never renders a Google button.
+    enabled: process.env.ENABLE_GOOGLE_AUTH === 'true',
+    // ONLY the public client_id — the audience we verify ID tokens against.
+    // The OAuth client_secret is NOT used for ID-token sign-in and must
+    // never be set here.
+    clientId: process.env.GOOGLE_CLIENT_ID || '',
+  },
   passwordReset: {
     // Short-lived by design. 30 min is the sweet spot for email-based flows.
     ttlMinutes: Number(process.env.PASSWORD_RESET_TTL_MINUTES) || 30,
@@ -138,5 +147,12 @@ export function assertProductionSecrets() {
     ['RAZORPAY_WEBHOOK_SECRET', config.razorpay.webhookSecret],
   ] as const) {
     if (!value || value.includes('change-me')) required(path);
+  }
+  // If Google auth is turned on, the client_id is mandatory — without it we
+  // can't verify ID tokens, and we'd silently authenticate nobody.
+  if (config.googleAuth.enabled && !config.googleAuth.clientId) {
+    throw new Error(
+      'ENABLE_GOOGLE_AUTH=true but GOOGLE_CLIENT_ID is not set',
+    );
   }
 }

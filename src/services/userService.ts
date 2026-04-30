@@ -18,6 +18,8 @@ interface UserRow {
   mobile_number: string | null;
   referral_code: string;
   referred_by_user_id: string | null;
+  google_id: string | null;
+  auth_provider: 'email' | 'google';
   created_at: Date;
   updated_at: Date;
 }
@@ -27,6 +29,7 @@ const USER_COLUMNS = `
   subscription_active_until, razorpay_customer_id, is_admin,
   verified_at, signup_ip, signup_user_agent, signup_locale,
   mobile_number, referral_code, referred_by_user_id,
+  google_id, auth_provider,
   created_at, updated_at
 `;
 
@@ -69,10 +72,14 @@ export async function insertUser(params: {
   name: string;
   email: string;
   passwordHash: string;
-  mobileNumber: string;
+  // Optional for Google signups (Google doesn't return a phone number).
+  // The DB column is nullable; the partial unique index ignores nulls.
+  mobileNumber: string | null;
   trialDays: number;
   termsVersion: string;
   referralCode: string;
+  authProvider?: 'email' | 'google';
+  googleId?: string | null;
   signupIp?: string | null;
   signupUserAgent?: string | null;
   signupLocale?: string | null;
@@ -82,11 +89,11 @@ export async function insertUser(params: {
        (name, email, password_hash, mobile_number, trial_ends_at,
         terms_accepted_at, terms_version,
         signup_ip, signup_user_agent, signup_locale,
-        referral_code)
+        referral_code, auth_provider, google_id)
      values ($1, lower($2), $3, $4,
              now() + ($5 || ' days')::interval,
              now(), $6, $7, $8, $9,
-             $10)
+             $10, $11, $12)
      returning ${USER_COLUMNS}`,
     [
       params.name,
@@ -99,7 +106,38 @@ export async function insertUser(params: {
       params.signupUserAgent ?? null,
       params.signupLocale ?? null,
       params.referralCode,
+      params.authProvider ?? 'email',
+      params.googleId ?? null,
     ],
+  );
+  return rows[0];
+}
+
+export async function findUserByGoogleId(
+  googleId: string,
+): Promise<UserRow | null> {
+  const { rows } = await query<UserRow>(
+    `select ${USER_COLUMNS} from users where google_id = $1 limit 1`,
+    [googleId],
+  );
+  return rows[0] ?? null;
+}
+
+/**
+ * Attaches a Google account to an existing email/password user. Used in the
+ * auto-link path: same email signs in via Google → we record google_id but
+ * deliberately leave `auth_provider` untouched so password access keeps
+ * working.
+ */
+export async function attachGoogleIdToUser(
+  userId: string,
+  googleId: string,
+): Promise<UserRow> {
+  const { rows } = await query<UserRow>(
+    `update users set google_id = $2
+     where id = $1 and google_id is null
+     returning ${USER_COLUMNS}`,
+    [userId, googleId],
   );
   return rows[0];
 }
