@@ -32,6 +32,10 @@ const signupSchema = z.object({
     }),
   }),
   termsVersion: z.string().trim().min(1).max(40).optional(),
+  // Referral code from `/signup?ref=...`. Optional, normalised server-side.
+  // Length range matches the 8-char generated codes plus a little slack for
+  // any future reformatting; runtime lookup tolerates whitespace/case.
+  referralCode: z.string().trim().min(4).max(32).optional(),
 });
 
 function normalisePhone(raw: string): string {
@@ -82,6 +86,7 @@ export async function signup(
       password: input.password,
       mobileNumber: normalisePhone(input.mobileNumber),
       termsVersion: input.termsVersion ?? '1.0.0',
+      referralCode: input.referralCode?.toUpperCase() ?? null,
       signupIp: clientIp(req),
       signupUserAgent: req.get('user-agent') ?? null,
       signupLocale: req.get('accept-language')?.split(',')[0]?.trim() ?? null,

@@ -9,6 +9,7 @@ import userRoutes from './routes/userRoutes';
 import billingRoutes from './routes/billingRoutes';
 import adminRoutes from './routes/adminRoutes';
 import documentRoutes from './routes/documentRoutes';
+import referralRoutes from './routes/referralRoutes';
 import { webhook as billingWebhook } from './controllers/billingController';
 import { closeBrowser } from './services/pdfService';
 
@@ -39,6 +40,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/billing', billingRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/referrals', referralRoutes);
 app.use('/api', documentRoutes);
 
 // Convenience alias used by the subscription-status poll on the client.

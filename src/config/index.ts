@@ -63,7 +63,12 @@ export const config = {
     saltRounds: Number(process.env.BCRYPT_SALT_ROUNDS) || 10,
   },
   trial: {
-    days: Number(process.env.TRIAL_DAYS) || 30,
+    days: Number(process.env.TRIAL_DAYS) || 15,
+  },
+  referral: {
+    // Days added to the referrer's trial when a referee finishes ₹1 verification.
+    // Stacked on top of the base trial → typical referrer ends up at 15 + 15 = 30d.
+    rewardDays: Number(process.env.REFERRAL_REWARD_DAYS) || 15,
   },
   admin: {
     // Comma-separated list of emails treated as admin even without the DB flag.

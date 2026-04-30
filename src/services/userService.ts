@@ -16,6 +16,8 @@ interface UserRow {
   signup_user_agent: string | null;
   signup_locale: string | null;
   mobile_number: string | null;
+  referral_code: string;
+  referred_by_user_id: string | null;
   created_at: Date;
   updated_at: Date;
 }
@@ -24,7 +26,8 @@ const USER_COLUMNS = `
   id, name, email, password_hash, trial_ends_at,
   subscription_active_until, razorpay_customer_id, is_admin,
   verified_at, signup_ip, signup_user_agent, signup_locale,
-  mobile_number, created_at, updated_at
+  mobile_number, referral_code, referred_by_user_id,
+  created_at, updated_at
 `;
 
 export function isAdminEmail(email: string): boolean {
@@ -69,6 +72,7 @@ export async function insertUser(params: {
   mobileNumber: string;
   trialDays: number;
   termsVersion: string;
+  referralCode: string;
   signupIp?: string | null;
   signupUserAgent?: string | null;
   signupLocale?: string | null;
@@ -77,10 +81,12 @@ export async function insertUser(params: {
     `insert into users
        (name, email, password_hash, mobile_number, trial_ends_at,
         terms_accepted_at, terms_version,
-        signup_ip, signup_user_agent, signup_locale)
+        signup_ip, signup_user_agent, signup_locale,
+        referral_code)
      values ($1, lower($2), $3, $4,
              now() + ($5 || ' days')::interval,
-             now(), $6, $7, $8, $9)
+             now(), $6, $7, $8, $9,
+             $10)
      returning ${USER_COLUMNS}`,
     [
       params.name,
@@ -92,6 +98,7 @@ export async function insertUser(params: {
       params.signupIp ?? null,
       params.signupUserAgent ?? null,
       params.signupLocale ?? null,
+      params.referralCode,
     ],
   );
   return rows[0];
