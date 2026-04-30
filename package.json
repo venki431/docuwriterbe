@@ -1,7 +1,7 @@
 {
   "name": "docuwriter-server",
   "version": "1.0.0",
-  "description": "DocuWriter backend - auth, subscriptions, document generation",
+  "description": "DocGen backend - auth, subscriptions, document generation",
   "main": "dist/index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
@@ -16,6 +16,7 @@
     "docx": "^8.5.0",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "jszip": "^3.10.1",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.12.0",
     "puppeteer": "^22.15.0",

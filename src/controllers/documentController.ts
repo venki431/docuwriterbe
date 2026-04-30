@@ -10,7 +10,7 @@ import {
 } from '../utils/validation';
 
 const DOCUMENT_TITLES: Record<DocumentType, string> = {
-  'sale-deed': 'Sale-Deed',
+  'agreement-of-sale': 'Agreement-of-Sale',
   rental: 'Rental-Agreement',
   affidavit: 'Affidavit',
 };

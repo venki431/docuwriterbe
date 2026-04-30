@@ -18,9 +18,9 @@ import {
 
 export async function generateRentalDocx(data: RentalData): Promise<Buffer> {
   const doc = new Document({
-    creator: 'DocuWriter',
+    creator: 'DocGen',
     title: 'Rental Agreement',
-    description: 'Rental Agreement generated via DocuWriter',
+    description: 'Rental Agreement generated via DocGen',
     styles: DOC_STYLES,
     numbering: DOC_NUMBERING,
     sections: [

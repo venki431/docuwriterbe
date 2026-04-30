@@ -17,6 +17,7 @@ import {
   signRefreshToken,
   verifyRefreshToken,
 } from './tokenService';
+import { renderWelcomeEmail, sendEmail } from './emailService';
 import { AuthUser } from '../types/auth';
 
 export interface AuthResult {
@@ -67,6 +68,22 @@ export async function signup(params: {
     });
 
     const tokens = await issueTokenPair(row.id, row.email);
+
+    // Fire-and-forget welcome email. A delivery failure must not block signup —
+    // the account is already created and the user is being logged in below.
+    void (async () => {
+      try {
+        const { subject, html, text } = renderWelcomeEmail({
+          name: row.name,
+          trialDays: config.trial.days,
+          trialEndsAt: row.trial_ends_at,
+        });
+        await sendEmail({ to: row.email, subject, html, text });
+      } catch (err) {
+        console.error('[welcome-email] delivery failed:', err);
+      }
+    })();
+
     return { user: rowToAuthUser(row), ...tokens };
   } catch (err) {
     // Partial-unique index on mobile_number → Postgres error code 23505.

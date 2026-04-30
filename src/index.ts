@@ -51,7 +51,7 @@ app.use(errorHandler);
 
 const server = app.listen(config.port, () => {
   // eslint-disable-next-line no-console
-  console.log(`DocuWriter API listening on http://localhost:${config.port}`);
+  console.log(`DocGen API listening on http://localhost:${config.port}`);
 });
 
 async function shutdown(signal: string): Promise<void> {

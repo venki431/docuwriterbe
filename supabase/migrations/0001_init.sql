@@ -1,4 +1,4 @@
--- 0001_init — baseline DocuWriter schema.
+-- 0001_init — baseline DocGen schema.
 --
 -- Safe to re-run: every object uses `if not exists`. This is the only
 -- migration that creates the full schema from scratch; every later change

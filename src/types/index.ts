@@ -1,4 +1,4 @@
-export type DocumentType = 'sale-deed' | 'rental' | 'affidavit';
+export type DocumentType = 'agreement-of-sale' | 'rental' | 'affidavit';
 export type DocumentFormat = 'pdf' | 'docx';
 
 export interface GenerateDocumentRequest {
@@ -40,7 +40,8 @@ export interface RentalData {
 
 export interface AffidavitData {
   deponentName: string;
-  fatherName: string;
+  deponentRelationType: string;
+  deponentRelationName: string;
   age: string;
   occupation: string;
   address: string;

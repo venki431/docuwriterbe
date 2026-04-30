@@ -49,7 +49,7 @@ export function requireActiveSubscription(
   if (!req.subscription || !req.subscription.hasAccess) {
     next(
       new PaymentRequiredError(
-        'Your free trial has ended. Subscribe to continue using DocuWriter.',
+        'Your free trial has ended. Subscribe to continue using DocGen.',
       ),
     );
     return;

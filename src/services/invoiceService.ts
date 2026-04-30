@@ -73,8 +73,8 @@ function formatDate(d: Date): string {
 
 function planLabel(planId: string | null, durationDays: number | null): string {
   const label = planId ? planId[0].toUpperCase() + planId.slice(1) : 'Subscription';
-  if (!durationDays) return `DocuWriter ${label} Plan`;
-  return `DocuWriter ${label} Plan — ${durationDays} days of access`;
+  if (!durationDays) return `DocGen ${label} Plan`;
+  return `DocGen ${label} Plan — ${durationDays} days of access`;
 }
 
 function renderInvoiceHtml(
